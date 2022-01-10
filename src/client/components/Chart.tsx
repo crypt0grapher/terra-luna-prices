@@ -1,17 +1,14 @@
-import Link from 'next/link';
-import {FC} from 'react';
-import {useFeature} from 'src/client/hooks/useFeatures';
-import {buildServerSideProps} from 'src/client/ssr/buildServerSideProps';
-import {Price} from 'src/shared/types/price';
-import {fetch} from 'src/shared/utils/fetch';
+import React from "react";
+import Title from "./Title";
 import dynamic from 'next/dynamic';
+import {Price} from '../../shared/types/price';
 const Chart = dynamic(() => import('kaktana-react-lightweight-charts'), {
     ssr: false
 });
 
-// type THomeProps = {
-//     prices: Price[];
-// };
+type THomeProps = {
+    prices: Price[];
+};
 
 const priceChart = {
     options: {
@@ -26,7 +23,7 @@ const priceChart = {
             borderColor: '#fff000',
             visible: true,
             timeVisible: true,
-            secondsVisible: false
+            secondsVisible: true
         }
     },
     candlestickSeries: [{
@@ -46,14 +43,17 @@ const priceChart = {
         ]
     }]
 }
-const Home: FC = () => {
 
-    return <Chart options={priceChart.options} candlestickSeries={priceChart.candlestickSeries} autoWidth height={320}/>
-};
+export default function Chartbox() {
+  // const [data, setData] = React.useState<ISale[]>([]);
+  // React.useEffect(() => {
+  //   getSales().then(setData);
+  // }, []);
 
-// export const getServerSideProps = buildServerSideProps<THomeProps>(async () => {
-//   const prices = await fetch('/api/prices');
-//   return {prices};
-// });
-
-export default Home;
+  return (
+    <React.Fragment>
+      <Title>Today</Title>
+          <Chart options={priceChart.options} candlestickSeries={priceChart.candlestickSeries} autoWidth height={320}/>
+    </React.Fragment>
+  );
+}

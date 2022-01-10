@@ -1,8 +1,6 @@
 import {
   Controller,
   Get,
-  Param,
-  ParseIntPipe,
   Render,
   UseInterceptors,
 } from '@nestjs/common';
@@ -21,14 +19,16 @@ export class AppController {
     return {};
   }
 
+  @Get('/api/status')
+  public getStatus() {
+    // return % of database completeness querying latest block fom the blockchain and from the mongodb
+    return null;
+  }
+
   @Get('/api/prices')
   public listPrices() {
     // return this.appService.getPrices();
     return null;
   }
 
-  @Get('/api/blog-posts/:id')
-  public getPriceById(@Param('id', new ParseIntPipe()) id: number) {
-    return this.appService.getPrice(id);
-  }
 }
