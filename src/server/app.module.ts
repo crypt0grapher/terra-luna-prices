@@ -2,17 +2,19 @@ import {DynamicModule, MiddlewareConsumer, Module} from '@nestjs/common';
 import {ConfigModule, ConfigService} from '@nestjs/config';
 import {MongooseModule} from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
+import { BullModule } from '@nestjs/bull';
 import Next from 'next';
 import { RenderModule } from 'nest-next';
 import { NODE_ENV } from 'src/shared/constants/env';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from './utils/logger.middleware';
-// import TerraModule from './terra/terra.module';
+import TerraModule from './terra/terra.module';
+import {TerraPrice, TerraPricesSchema} from './app.schema';
+import { PopulateModule } from './populate/populate.module';
 
 declare const module: any;
 
-@Module({})
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('*');
@@ -34,24 +36,31 @@ export class AppModule {
     return {
       module: AppModule,
       imports: [
-          ScheduleModule.forRoot(),
-        //  MongooseModule.forRootAsync({
-        //   imports: [ConfigModule],
-        //   useFactory: async (configService: ConfigService) => {
-        //     const username = configService.get('MONGO_USERNAME');
-        //     const password = configService.get('MONGO_PASSWORD');
-        //     const database = configService.get('MONGO_DATABASE');
-        //     const host = configService.get('MONGO_HOST');
-        //
-        //     return {
-        //       uri: username ? `mongodb://${username}:${password}@${host}` : `mongodb://${host}`,
-        //       dbName: database,
-        //     };
-        //   },
-        //   inject: [ConfigService],
-        // }),
+        ConfigModule,
+        ScheduleModule.forRoot(),
+        BullModule.forRoot({
+            redis: {
+              host: 'localhost',
+              port: 6379,
+            },
+        }),
+        BullModule.registerQueue({
+          name: 'populate-db-from-blockchain',
+        }),
+        MongooseModule.forRootAsync({
+          imports: [ConfigModule],
+          useFactory: async (configService: ConfigService) => {
+            const connectionString = configService.get('MONGODB_CONNECTION_STRING');
+            return {
+              uri: connectionString,
+            };
+          },
+          inject: [ConfigService],
+        }),
+          MongooseModule.forFeature([{ name: TerraPrice.name, schema: TerraPricesSchema }]),
+          PopulateModule,
           renderModule,
-          // TerraModule
+          TerraModule,
       ],
       controllers: [AppController],
       providers: [AppService],

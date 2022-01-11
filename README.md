@@ -1,3 +1,26 @@
+Problem
+Terra is an actively emerging blockchain focused on decentralized finance around stablecoins.
+There are some swap pairs of Terra native assets.
+Currently there are no 
+
+arbitrage opportunities.
+
+
+MIT
+Redis
+Allthough it's pretty simple it utilizes scalable architecture  that is
+redis - many workers can populate the db without worrying to stall the server
+typescript
+nest
+mongoose
+
+next
+
+
+
+
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>

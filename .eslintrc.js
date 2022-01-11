@@ -7,6 +7,8 @@ module.exports = {
   plugins: ['@typescript-eslint/eslint-plugin'],
   extends: [
     'plugin:@typescript-eslint/recommended',
+    "plugin:react/recommended",
+    "next",
     'plugin:prettier/recommended',
   ],
   root: true,
