@@ -48,7 +48,7 @@ export class TerraService {
                   }
                 );
                 const price = {[swapper]: Number(simulationResponse.return_amount) / 1000000.0 } as Price;
-                // this.logger.debug(JSON.stringify(price));
+                this.logger.debug(JSON.stringify(price));
                 response.push(price);
             }
             return response;
