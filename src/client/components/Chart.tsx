@@ -1,36 +1,32 @@
-import  React from "react";
-import  { FC, ReactNode } from "react";
+import React from "react";
+import { FC, ReactNode } from "react";
 import Title from "./Title";
 import dynamic from "next/dynamic";
-import { Price, PriceCandleStick, PricePoint } from "../../shared/types/price";
+import { PriceCandleStick, PricePoint } from "../../shared/types/price";
 import { getPrices, getCandles } from "../lib/api";
-import {Swapper} from "../../shared/types/swappers";
+import { Swapper } from "../../shared/types/swappers";
 
 const Chart = dynamic(() => import("kaktana-react-lightweight-charts"), {
   ssr: false
 });
 
-type THomeProps = {
-  prices: Price[];
-};
-
 const priceChart = {
   options: {
     localization: {
-      priceFormatter: (price: string) => Number(price).toFixed(4),
+      priceFormatter: (price: string) => Number(price).toFixed(4)
     },
     priceScale: {
-      position: 'left',
+      position: "left",
       mode: 1,
       autoScale: true,
       invertScale: false,
       alignLabels: false,
       borderVisible: false,
-      borderColor: '#555ffd',
+      borderColor: "#555ffd",
       scaleMargins: {
         top: 0.2,
-        bottom: 0.1,
-      },
+        bottom: 0.1
+      }
     },
     alignLabels: true,
     timeScale: {
@@ -44,14 +40,14 @@ const priceChart = {
       borderColor: "#fff000",
       visible: true,
       timeVisible: true,
-      secondsVisible: true,
+      secondsVisible: true
 
     },
     priceFormat: {
-      type: 'price',
+      type: "price",
       precision: 6,
-      minMove: 0.000001,
-    },
+      minMove: 0.000001
+    }
   },
   candlestickSeries: [{
     data: [
@@ -132,12 +128,13 @@ const priceChart = {
 };
 
 interface Props {
-  swapper: Swapper
-  candles: boolean
+  swapper: Swapper;
+  candles: boolean;
+  children?: ReactNode;
 }
 
-const ChartBox: FC<Props> = ({...props}) => {
-  const {swapper, candles} = props;
+const ChartBox: FC<Props> = ({ ...props }) => {
+  const { swapper, candles } = props;
   const [dataCandle, setDataCandle] = React.useState<PriceCandleStick[]>([]);
   const [dataLine, setDataLine] = React.useState<PricePoint[]>([]);
   const [date, setDate] = React.useState<Date>(new Date());
@@ -149,7 +146,8 @@ const ChartBox: FC<Props> = ({...props}) => {
 
   React.useEffect(() => {
     if (candles)
-      getCandles(swapper).then(setDataLine);
+      getCandles(swapper).then(setDataCandle);
+    console.log(JSON.stringify(dataCandle));
   }, [date]);
 
   React.useEffect(() => {
@@ -160,7 +158,7 @@ const ChartBox: FC<Props> = ({...props}) => {
 
   return (
     <React.Fragment>
-      <Title>bLuna {swapper} Price (in Luna)</Title>
+      <Title>bLuna {swapper} {candles? "1m Candle Stick Chart" : "Prices"} (in Luna)</Title>
       {candles ?
         <Chart options={priceChart.options} candlestickSeries={[{ data: dataCandle }]} autoWidth height={180} />
         :
@@ -168,6 +166,6 @@ const ChartBox: FC<Props> = ({...props}) => {
       }
     </React.Fragment>
   );
-}
+};
 
 export default ChartBox;

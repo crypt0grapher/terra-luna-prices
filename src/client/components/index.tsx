@@ -9,8 +9,6 @@ import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import React from "react";
 import ChartBox from "./Chart";
-import Deposits from "./Deposits";
-import Orders from "./Orders";
 import TitleBar from "./TitleBar";
 
 function Copyright() {
@@ -23,7 +21,7 @@ function Copyright() {
       {new Date().getFullYear()}
         <br/>
       {"Powered by "}
-      <Link color="inherit" href="https://mongodb.com/">
+      <Link color="inherit" href="https://docs.mongodb.com/manual/core/timeseries-collections/">
         MongoDB Time Series
       </Link>
       {", "}
@@ -97,6 +95,26 @@ export default function Dashboard() {
             <Grid item xs={12} md={12} lg={12}>
               <Paper className={fixedHeightPaper}>
                 <ChartBox swapper={'Astroport'} candles={false}/>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
+        <Container maxWidth="lg" className={classes.container}>
+          <Grid container spacing={3}>
+            {/* Chart */}
+            <Grid item xs={12} md={12} lg={12}>
+              <Paper className={fixedHeightPaper}>
+                <ChartBox swapper={'TerraSwap'} candles={true}/>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={12} lg={12}>
+              <Paper className={fixedHeightPaper}>
+                <ChartBox swapper={'LOOP'} candles={true}/>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={12} lg={12}>
+              <Paper className={fixedHeightPaper}>
+                <ChartBox swapper={'Astroport'} candles={true}/>
               </Paper>
             </Grid>
           </Grid>

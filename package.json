@@ -14,7 +14,7 @@
     "start": "nest start",
     "start:next": "next dev",
     "start:dev": "NODE_ENV=development nest build --webpack --webpackPath webpack-hmr.config.js --watch --path tsconfig.server.json",
-    "start:debug": "nest start --path ./tsconfig.server.json --debug --watch",
+    "start:debug": "yarn build && nest start --path ./tsconfig.server.json --debug --watch",
     "start:prod": "node dist/main",
     "start:proxy": "docker run --name nest-next-blog-proxy -v $(pwd)/nginx.conf:/etc/nginx/conf.d/default.conf:ro --add-host localnode:$(ifconfig en0 | grep inet | grep -v inet6 | awk '{print $2}') -p 8080:8080 -d nginx",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
