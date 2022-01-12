@@ -9,6 +9,7 @@ There is no monitoring tool that allows to compare bLuna price on these exchange
 Solution
 ==========
 This simple single-page app shows bLuna price in Luna for all three exchanges as a price line as well as a 60s candle stick bar chart.
+The solution is deployed and available at [http://46.148.238.135:3000/](http://46.148.238.135:3000/)
 
 Approach
 ==========

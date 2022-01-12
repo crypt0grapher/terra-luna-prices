@@ -24,7 +24,5 @@ export class PopulateProcessor {
       const document = new this.terraPriceModel({ time: new Date(), prices: prices });
       await document.save();
     }
-    await job.progress(100);
-    return {};
   }
 }
