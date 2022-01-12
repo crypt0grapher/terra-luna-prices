@@ -1,12 +1,13 @@
 import {
   Controller,
-  Get,
+  Get, Param,
   Render,
-  UseInterceptors,
-} from '@nestjs/common';
+  UseInterceptors
+} from "@nestjs/common";
 import { AppService } from './app.service';
 import { ParamsInterceptor } from './params.interceptor';
 import { ConfigInterceptor } from './config.interceptor';
+import { ParamsWithSwapperName, ParamsWithSwapperNameAndScale } from "../shared/types/swappers";
 
 @Controller()
 export class AppController {
@@ -25,10 +26,15 @@ export class AppController {
     return null;
   }
 
-  @Get('/api/prices')
-  public listPrices() {
-    // return this.appService.getPrices();
-    return null;
+  @Get('/api/prices/:swapper')
+  public listPrices(@Param() {swapper}: ParamsWithSwapperName) {
+    return this.appService.getPrices(swapper);
+  }
+
+
+  @Get('/api/candles/:swapper/:scale')
+  public listCandles(@Param() {swapper, scale}: ParamsWithSwapperNameAndScale) {
+    return this.appService.getCandles(swapper, scale);
   }
 
 }

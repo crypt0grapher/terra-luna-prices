@@ -8,7 +8,7 @@ import { makeStyles } from '@mui/styles';
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import React from "react";
-import Chartbox from "./Chart";
+import ChartBox from "./Chart";
 import Deposits from "./Deposits";
 import Orders from "./Orders";
 import TitleBar from "./TitleBar";
@@ -33,6 +33,10 @@ function Copyright() {
       {", "}
       <Link color="inherit" href="https://nextjs.org">
         Next.js
+      </Link>
+      {", "}
+      <Link color="inherit" href="https://tradingview.com">
+        TradingView
       </Link>
       {", and "}
       <Link color="inherit" href="https://material-ui.com/">
@@ -80,21 +84,19 @@ export default function Dashboard() {
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
             {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
+            <Grid item xs={12} md={12} lg={12}>
               <Paper className={fixedHeightPaper}>
-                <Chartbox />
+                <ChartBox swapper={'TerraSwap'} candles={false}/>
               </Paper>
             </Grid>
-            {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
+            <Grid item xs={12} md={12} lg={12}>
               <Paper className={fixedHeightPaper}>
-                <Deposits />
+                <ChartBox swapper={'LOOP'} candles={false}/>
               </Paper>
             </Grid>
-            {/* Recent Orders */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Orders />
+            <Grid item xs={12} md={12} lg={12}>
+              <Paper className={fixedHeightPaper}>
+                <ChartBox swapper={'Astroport'} candles={false}/>
               </Paper>
             </Grid>
           </Grid>

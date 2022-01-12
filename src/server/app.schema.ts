@@ -1,20 +1,21 @@
 import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
 import {Document, Schema as MongooseSchema} from 'mongoose';
+import { Price } from "../shared/types/price";
 
 export type TerraPriceDocument = TerraPrice & Document;
 
 @Schema({timeseries: {
-        timeField: 'blockTime'
+        timeField: 'time'
     }})
 export class TerraPrice {
     @Prop()
-    blockTime!: Date;
+    time!: Date;
 
     @Prop()
     height!: number;
 
     @Prop()
-    price!: number;
+    prices!: Price[];
 }
 
 export const TerraPricesSchema = SchemaFactory.createForClass(TerraPrice);

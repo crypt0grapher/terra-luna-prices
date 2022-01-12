@@ -1,24 +1,20 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {ConfigService} from '@nestjs/config';
 import {LCDClient, Coin} from '@terra-money/terra.js';
+import { Price } from "../../shared/types/price";
+import { bLunaPairAddresses, chain_id, node } from "../../shared/constants/env";
+import { Swapper } from "../../shared/types/swappers";
 
-const chain_id = 'columbus-5';
-const node = 'https://lcd.terra.dev';
-
-const bLuna = {
-    'columbus-5': 'terra1kc87mu460fwkqte29rquh4hc20m54fxwtsx7gp',
-    'bombay-12': 'terra1u0t35drzyy0mujj8rkdyzhe264uls4ug3wdp3x',
-};
-
-const bLunaPair = {
-    'columbus-5': 'terra1jxazgm67et0ce260kvrpfv50acuushpjsz2y0p',
-    'bombay-12': 'terra13e4jmcjnwrauvl2fnjdwex0exuzd8zrh5xk29v',
+interface SimulationResponse {
+    return_amount: string;
+    spread_amount: string;
+    commission_amount: string;
 }
-
 
 @Injectable()
 export class TerraService {
     private terra: LCDClient;
+    private readonly logger = new Logger(TerraService.name);
 
     constructor() {
         this.terra = new LCDClient({
@@ -27,9 +23,38 @@ export class TerraService {
         });
     }
 
-
-    async getCurrentBlock() {
-        return Number((await this.terra.tendermint.blockInfo()).block.header.height);
+    async getBlockHeader(height?: number) {
+        return (await this.terra.tendermint.blockInfo(height)).block.header;
     }
 
+    async getPriceData(height?: number): Promise<Price[] | null> {
+        try {
+            let response = [];
+            let swapper: keyof typeof bLunaPairAddresses;
+            for(swapper in bLunaPairAddresses) {
+                const simulationResponse: SimulationResponse = await this.terra.wasm.contractQuery(
+                  bLunaPairAddresses[swapper],
+                  {
+                      simulation: {
+                          offer_asset: {
+                              amount: '1000000',
+                              info: {
+                                  native_token: {
+                                      denom: 'uluna'
+                                  }
+                              }
+                          }
+                      }
+                  }
+                );
+                const price = {[swapper]: Number(simulationResponse.return_amount) / 1000000.0 } as Price;
+                // this.logger.debug(JSON.stringify(price));
+                response.push(price);
+            }
+            return response;
+        } catch (e) {
+            this.logger.log(`Terra error ${e}`);
+            return null;
+        }
+    }
 }

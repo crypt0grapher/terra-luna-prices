@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme: any) => ({
 
 export default function TitleBar() {
   const classes = useStyles(useTheme());
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -113,7 +113,7 @@ export default function TitleBar() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-          Monitoring tool for native crypto assets on Terra blockchain
+          Terra blockchain crypto assets monitoring
           </Typography>
           <IconButton color="inherit">
               <Badge badgeContent={0} color="secondary">

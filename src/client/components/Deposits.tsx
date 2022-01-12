@@ -38,7 +38,7 @@ export default function Deposits() {
       {/*  </React.Fragment>*/}
       {/*))}*/}
       <div>
-        <Link color="primary" href="javascript:;">
+        <Link color="primary" href="/">
           View balance
         </Link>
       </div>

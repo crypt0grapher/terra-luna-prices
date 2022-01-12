@@ -6,6 +6,10 @@ Currently there are no
 arbitrage opportunities.
 
 
+demonstrates how data processing works in MongoDB.
+aggregate with unwind 
+
+
 MIT
 Redis
 Allthough it's pretty simple it utilizes scalable architecture  that is

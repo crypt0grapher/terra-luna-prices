@@ -8,12 +8,8 @@ import {InjectModel} from '@nestjs/mongoose';
 import {Model} from 'mongoose';
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
-
-const PRICES = [
-  { title: 'Lorem Ipsum', id: 1 },
-  { title: 'Dolore Sit', id: 2 },
-  { title: 'Amet', id: 3 },
-];
+import { PricePoint } from "../shared/types/price";
+import { Swapper } from "../shared/types/swappers";
 
 @Injectable()
 export class AppService {
@@ -24,23 +20,51 @@ export class AppService {
       @InjectModel(TerraPrice.name) private terraPriceModel: Model<TerraPriceDocument>,
       private configService: ConfigService,
       private terraService: TerraService) {
-    this.queue.add('populate').then( () =>
+    this.queue.add('populate',{repeat: {every: 1000}}).then( () =>
       this.logger.log('check-and-populate-db job added to queue')
     )
   }
 
-  getPrices() {
-    return from(PRICES).pipe(toArray());
+  async getPrices(swapper: Swapper) {
+    const dbPrices = await this.terraPriceModel.aggregate([
+      {$unwind: "$prices"},
+      {$unwind: `$prices.${swapper}`},
+      {$group:
+          {"_id":"$time",
+            "price":
+              {"$first":`$prices.${swapper}`}}}]);
+    return dbPrices.map(item => {
+        return {time: item._id.getTime()/1000, value: Number(item.price)} as PricePoint;
+    })
   }
 
-  getPrice(postId: number) {
-    const Price = PRICES.find(({ id }) => id === postId);
+  async getCandles(swapper: Swapper, scale: number) {
+    // const dbPrices = await this.terraPriceModel.aggregate([
+    //   {$group: {
+    //       _id: {
+    //         swapper: "$symbol",
+    //         time: {
+    //           $dateTrunc: {
+    //             date: "$time",
+    //             unit: "minute",
+    //             binSize: scale
+    //           },
+    //         },
+    //       },
+    //       high: { $max: "$price" },
+    //       low: { $min: "$price" },
+    //       open: { $first: "$price" },
+    //       close: { $last: "$price" },
+    //     },
+    //   }
+    // ]).limit(1000);
 
-    if (!Price) {
-      throw new NotFoundException();
-    }
-
-    return of(Price);
+    // return dbPrices.map(item => {
+    //     const price = item.prices.find(item => item[swapper]);
+    //     if (price)
+    //       return {time: item.time.getTime()/1000, value: price[swapper]} as PricePoint;
+    //   }
+    // )
   }
 
 }

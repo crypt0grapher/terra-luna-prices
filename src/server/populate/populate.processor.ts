@@ -19,17 +19,10 @@ export class PopulateProcessor {
 
   @Process('populate')
   async handlePopulate(job: Job) {
-    this.logger.debug('Start transcoding...');
-    const latestTerraBlock = await this.terraService.getCurrentBlock();
-
-    const latestMongoBlockInDB =
-      (await this.terraPriceModel.exists({}) &&
-      (await this.terraPriceModel.findOne({}, {sort:{$natural:-1}}))?.height) || 0;
-    const startMongoBlockToFill =  Math.max(latestMongoBlockInDB, this.configService.get('START_BLOCK') || 0) + 1;
-    for (let block = startMongoBlockToFill; block <= latestTerraBlock; block++ ) {
-      // this.logger.log(block);
-      // const price = this.terraService.queryPriceData(block);
+    const prices = await this.terraService.getPriceData();
+    if (prices) {
+      const document = new this.terraPriceModel({ time: new Date(), prices: prices });
+      await document.save();
     }
-    this.logger.debug('Transcoding completed');
   }
 }
