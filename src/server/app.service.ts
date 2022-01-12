@@ -6,6 +6,7 @@ import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { PriceCandleStick, PricePoint } from "../shared/types/price";
 import { Swapper } from "../shared/types/swappers";
+import { CronExpression } from "@nestjs/schedule";
 
 @Injectable()
 export class AppService {
@@ -15,7 +16,7 @@ export class AppService {
     @InjectQueue("populate-db-from-blockchain") private queue: Queue,
     @InjectModel(TerraPrice.name) private terraPriceModel: Model<TerraPriceDocument>,
     ) {
-    this.queue.add("populate", { repeat: { every: 1000 } }).then(() =>
+    this.queue.add("populate", { repeat: { cron: CronExpression.EVERY_SECOND } }).then(() =>
       this.logger.log("check-and-populate-db job added to queue")
     );
   }
@@ -38,25 +39,6 @@ export class AppService {
   }
 
   async getCandles(swapper: Swapper, scale: number) {
-    //
-    // const dbPricesTest = await this.terraPriceModel.aggregate([{
-    //   $group: {
-    //     _id: {
-    //       time: {
-    //         "$dateTrunc": {
-    //           "date": "$time",
-    //           "unit": "second",
-    //           "binSize": 60
-    //         }
-    //       }
-    //     },
-    //     high: { "$max": `$prices.${swapper}` },
-    //   }}
-    //   ]);
-    //
-    // this.logger.debug(JSON.stringify(dbPricesTest));
-
-
     const dbPrices = await this.terraPriceModel.aggregate([{
       $group: {
         _id: {
