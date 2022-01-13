@@ -16,7 +16,7 @@ export class AppService {
     @InjectQueue("populate-db-from-blockchain") private queue: Queue,
     @InjectModel(TerraPrice.name) private terraPriceModel: Model<TerraPriceDocument>,
     ) {
-    this.queue.add("populate", { repeat: { cron: CronExpression.EVERY_SECOND } }).then(() =>
+    this.queue.add("populate").then(() =>
       this.logger.log("check-and-populate-db job added to queue")
     );
   }

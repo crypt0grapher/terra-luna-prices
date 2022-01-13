@@ -42,6 +42,10 @@ or
 ```bash
 $ npm install
 ```
+Then create `.env` file with MongoDB connection details. It's a single line containing complete credentials with the database name. For example:
+```bash
+MONGODB_CONNECTION_STRING=mongodb+srv://<username>:<password>@cluster0.wdkb4.mongodb.net/<database>?retryWrites=true&w=majority
+```
 
 Then, 
 ```bash
