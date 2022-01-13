@@ -6,6 +6,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { TerraPrice, TerraPriceDocument } from "../app.schema";
 import { Model } from "mongoose";
 import { ConfigService } from "@nestjs/config";
+import { setTimeout } from "timers/promises";
 
 @Processor('populate-db-from-blockchain')
 export class PopulateProcessor {
@@ -24,6 +25,7 @@ export class PopulateProcessor {
       const document = new this.terraPriceModel({ time: new Date(), prices: prices });
       await document.save();
     }
+    await setTimeout(1000);
     this.handlePopulate(job);
   }
 }

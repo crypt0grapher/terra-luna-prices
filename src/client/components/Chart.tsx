@@ -147,7 +147,6 @@ const ChartBox: FC<Props> = ({ ...props }) => {
   React.useEffect(() => {
     if (candles)
       getCandles(swapper).then(setDataCandle);
-    console.log(JSON.stringify(dataCandle));
   }, [date]);
 
   React.useEffect(() => {
