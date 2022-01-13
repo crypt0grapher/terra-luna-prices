@@ -157,7 +157,7 @@ const ChartBox: FC<Props> = ({ ...props }) => {
 
   return (
     <React.Fragment>
-      <Title>bLuna {swapper} {candles? "1m Candle Stick Chart" : "Prices"} (in Luna)</Title>
+      <Title>bLuna {swapper} {candles? "1m Candle Stick Chart" : "Price"} (in Luna)</Title>
       {candles ?
         <Chart options={priceChart.options} candlestickSeries={[{ data: dataCandle }]} autoWidth height={180} />
         :
