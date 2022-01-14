@@ -3,13 +3,8 @@ import {ConfigService} from '@nestjs/config';
 import {LCDClient, Coin} from '@terra-money/terra.js';
 import { Price } from "../../shared/types/price";
 import { bLunaPairAddresses, chain_id, node } from "../../shared/constants/env";
-import { Swapper } from "../../shared/types/swappers";
+import { Swapper, SimulationResponse, Simulations, PoolResponse} from "../../shared/types/swappers";
 
-interface SimulationResponse {
-    return_amount: string;
-    spread_amount: string;
-    commission_amount: string;
-}
 
 @Injectable()
 export class TerraService {
@@ -27,7 +22,28 @@ export class TerraService {
         return (await this.terra.tendermint.blockInfo(height)).block.header;
     }
 
-    async getPriceData(height?: number): Promise<Price[] | null> {
+    async getPriceData(): Promise<Price[] | null> {
+        try {
+            let response = [];
+            let swapper: keyof typeof bLunaPairAddresses;
+            for(swapper in bLunaPairAddresses) {
+                const poolResponse: PoolResponse = await this.terra.wasm.contractQuery(
+                  bLunaPairAddresses[swapper],
+                  {
+                      "pool": {}
+                  }
+                );
+                const price = {[swapper]: Number(poolResponse.assets[1].amount) / Number(poolResponse.assets[0].amount)} as Price;
+                response.push(price);
+            }
+            return response;
+        } catch (e) {
+            this.logger.log(`Terra error ${e}`);
+            return null;
+        }
+    }
+
+    async simulateSwapuLunaForbLuna(amount=1000000): Promise<Price[] | null> {
         try {
             let response = [];
             let swapper: keyof typeof bLunaPairAddresses;
@@ -37,7 +53,7 @@ export class TerraService {
                   {
                       simulation: {
                           offer_asset: {
-                              amount: '1000000',
+                              amount: amount.toString(),
                               info: {
                                   native_token: {
                                       denom: 'uluna'
@@ -56,4 +72,5 @@ export class TerraService {
             return null;
         }
     }
+
 }

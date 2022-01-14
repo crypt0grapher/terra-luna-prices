@@ -9,7 +9,6 @@ import { AppData } from "src/shared/types/app-data";
 import { initializeFetch } from "src/shared/utils/fetch";
 import theme from "src/client/theme/theme";
 import createEmotionCache from "src/client/theme/createEmotionCache";
-import Dashboard from "../client/components";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -33,18 +32,14 @@ class App extends NextApp<AppProps> {
   }
 
   render() {
-    const { pageProps } = this.props;
+    const { Component, pageProps } = this.props;
 
     return (
       <CacheProvider value={clientSideEmotionCache}>
-        <Head>
-          <meta name="viewport" content="initial-scale=1, width=device-width" />
-          <title>Terra Luna Prices Dashboard</title>
-        </Head>
         <AppDataContext.Provider value={this.appData}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Dashboard {...pageProps} />
+            <Component {...pageProps} />
           </ThemeProvider>
         </AppDataContext.Provider>
       </CacheProvider>
