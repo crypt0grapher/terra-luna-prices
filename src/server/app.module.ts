@@ -38,15 +38,6 @@ export class AppModule {
       imports: [
         ConfigModule,
         ScheduleModule.forRoot(),
-        BullModule.forRoot({
-            redis: {
-              host: 'localhost',
-              port: 6379,
-            },
-        }),
-        BullModule.registerQueue({
-          name: 'populate-db-from-blockchain',
-        }),
         MongooseModule.forRootAsync({
           imports: [ConfigModule],
           useFactory: async (configService: ConfigService) => {

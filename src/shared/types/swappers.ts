@@ -1,4 +1,10 @@
-export type Swapper = "TerraSwap" | "LOOP" | "Astroport";
+export enum Swappers {
+  TerraSwap,
+  LOOP,
+  Astroport
+}
+
+export type Swapper = keyof typeof Swappers;
 
 export class ParamsWithSwapperName {
   swapper!: Swapper;

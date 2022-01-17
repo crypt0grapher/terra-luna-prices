@@ -5,36 +5,46 @@ import { Model } from "mongoose";
 import { InjectQueue } from "@nestjs/bull";
 import { Queue } from "bull";
 import { PriceCandleStick, PricePoint } from "../shared/types/price";
-import { Swapper } from "../shared/types/swappers";
-import { CronExpression } from "@nestjs/schedule";
+import { Swapper, Swappers } from "../shared/types/swappers";
+import { TerraService } from "./terra/terra.service";
+import { PopulateProcessor } from "./populate/populate.processor";
+
+const dbPricesAggregator = (swapper: string) => [
+  { $unwind: "$prices" },
+  { $unwind: `$prices.${swapper}` },
+  {
+    $group:
+      {
+        _id: "$time",
+        price:
+          { $first: `$prices.${swapper}` }
+      }
+  }];
 
 @Injectable()
 export class AppService {
   private readonly logger = new Logger(AppService.name);
 
   constructor(
-    @InjectQueue("populate-db-from-blockchain") private queue: Queue,
     @InjectModel(TerraPrice.name) private terraPriceModel: Model<TerraPriceDocument>,
+    private populateProcessor: PopulateProcessor,
     ) {
-    this.queue.add("populate").then(() =>
-      this.logger.log("check-and-populate-db job added to queue")
-    );
+    this.populateProcessor.handlePopulate();
   }
 
-  async getPrices(swapper: Swapper) {
-    const dbPrices = await this.terraPriceModel.aggregate([
-      { $unwind: "$prices" },
-      { $unwind: `$prices.${swapper}` },
-      {
-        $group:
-          {
-            _id: "$time",
-            price:
-              { $first: `$prices.${swapper}` }
-          }
-      }]);
+  //get prices for swapper in TradingView format
+  async getPricesTV(swapper: Swapper) {
+    const dbPrices = await this.terraPriceModel.aggregate(dbPricesAggregator(swapper));
     return dbPrices.map(item => {
       return { time: item._id.getTime() / 1000, value: Number(item.price) } as PricePoint;
+    });
+  }
+
+  //get prices in Recharts format
+  async getPricesRC() {
+    const dbPrices = await this.terraPriceModel.find();
+    return dbPrices.map(item => {
+      return { time: item._id.getTime() / 1000, ...item.prices};
     });
   }
 

@@ -7,8 +7,10 @@ import { TerraPrice, TerraPriceDocument } from "../app.schema";
 import { Model } from "mongoose";
 import { ConfigService } from "@nestjs/config";
 import { setTimeout } from "timers/promises";
+import { setIntervalAsync} from "set-interval-async/dynamic";
+import { clearIntervalAsync } from 'set-interval-async'
 
-@Processor('populate-db-from-blockchain')
+
 export class PopulateProcessor {
   private readonly logger = new Logger(PopulateProcessor.name);
 
@@ -17,15 +19,15 @@ export class PopulateProcessor {
                private terraService: TerraService,
                ) {}
 
-
-  @Process('populate')
-  async handlePopulate(job: Job) {
-    const prices = await this.terraService.getPriceData();
-    if (prices) {
-      const document = new this.terraPriceModel({ time: new Date(), prices: prices });
-      await document.save();
-    }
-    await setTimeout(3000);
-    this.handlePopulate(job);
+  async handlePopulate() {
+    setIntervalAsync( () =>
+    this.terraService.getPriceData().then(prices => {
+      if (prices) {
+        const document = new this.terraPriceModel({ time: new Date(), prices: prices });
+        this.logger.debug(JSON.stringify(document));
+        document.save();
+      }
+    }),
+      3000);
   }
 }

@@ -10,6 +10,7 @@ import clsx from "clsx";
 import React from "react";
 import ChartBox from "./Chart";
 import TitleBar from "./TitleBar";
+import PricesBox from "./PricesBox";
 
 function Copyright() {
   return (
@@ -84,17 +85,7 @@ export default function Dashboard() {
             {/* Chart */}
             <Grid item xs={12} md={12} lg={12}>
               <Paper className={fixedHeightPaper}>
-                <ChartBox swapper={'TerraSwap'} candles={false}/>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={12} lg={12}>
-              <Paper className={fixedHeightPaper}>
-                <ChartBox swapper={'LOOP'} candles={false}/>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={12} lg={12}>
-              <Paper className={fixedHeightPaper}>
-                <ChartBox swapper={'Astroport'} candles={false}/>
+                <PricesBox/>
               </Paper>
             </Grid>
           </Grid>

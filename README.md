@@ -9,7 +9,8 @@ There is no monitoring tool that allows to compare bLuna price on these exchange
 Solution
 ==========
 This simple single-page app shows bLuna price in Luna for all three exchanges as a price line as well as a 60s candle stick bar chart.
-The solution is deployed and available at [http://46.148.238.135:3000/](http://46.148.238.135:3000/)
+"bLuna price" for AMMs prices chart is a raw rate determined from pool query to the pair contracts without taking spread into account. The price is amount of Luna in the pool divided by the amount of bLuna. For example, at a specific time [TerraSwap BLuna-Luna pair](https://finder.terra.money/mainnet/address/terra1jxazgm67et0ce260kvrpfv50acuushpjsz2y0p) `{ "pool": {} }` query returns _"amount": "1117327124270"_ of bLuna and  _"amount": "1112532209382"_ for Luna. That means that baseline price of bLuna in Luna = 1117327124270 (amount on Luna in the pool)/1112532209382 (amount of bLuna in the pool) = 1.0043099110727443 Luna per bLuna.
+The solution is deployed and available at [https://bluna.planeta.money/](https://bluna.planeta.money/)
 
 Approach
 ==========
@@ -32,7 +33,7 @@ $ sudo add-apt-repository ppa:redislabs/redis
 $ sudo apt-get update
 $ sudo apt-get install redis
 ```
-It's also possible on Win but I never tried.
+Should be also possible on Win but not tested.
 
 Then clone the repo and install it normally.
 ```bash
@@ -57,9 +58,6 @@ does the job serving the tool at
 Usage
 ==========
 That's pretty all of it. Responsive and scalable with mouse, trackpad or touchscreen.
-![img_1.png](img_1.png)
-
-![img.png](img.png)
 
 ## License
 The app is [Apache 2.0 licensed](LICENSE).

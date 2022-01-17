@@ -26,9 +26,14 @@ export class AppController {
     return null;
   }
 
+  @Get('/api/prices/')
+  public listPricesRecharts(@Param() {swapper}: ParamsWithSwapperName) {
+    return this.appService.getPricesRC();
+  }
+
   @Get('/api/prices/:swapper')
-  public listPrices(@Param() {swapper}: ParamsWithSwapperName) {
-    return this.appService.getPrices(swapper);
+  public listPricesTradingView(@Param() {swapper}: ParamsWithSwapperName) {
+    return this.appService.getPricesTV(swapper);
   }
 
 
