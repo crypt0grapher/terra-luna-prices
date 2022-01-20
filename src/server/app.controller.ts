@@ -19,6 +19,12 @@ export class AppController {
   home() {
     return {};
   }
+  @Get('/dashboard')
+  @Render('dashboard')
+  @UseInterceptors(ParamsInterceptor, ConfigInterceptor)
+  dashboard() {
+    return {};
+  }
 
   @Get('/api/status')
   public getStatus() {

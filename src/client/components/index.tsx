@@ -53,11 +53,11 @@ const useStyles = makeStyles((theme: any) => ({
   },
   content: {
     flexGrow: 1,
-    height: "100vh",
+    height: "200vh",
     overflow: "auto",
   },
   fixedHeight: {
-    height: 240,
+    height: 500,
   },
   paper: {
     display: "flex",
@@ -90,26 +90,26 @@ export default function Dashboard() {
             </Grid>
           </Grid>
         </Container>
-        <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={12} lg={12}>
-              <Paper className={fixedHeightPaper}>
-                <ChartBox swapper={'TerraSwap'} candles={true}/>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={12} lg={12}>
-              <Paper className={fixedHeightPaper}>
-                <ChartBox swapper={'LOOP'} candles={true}/>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={12} lg={12}>
-              <Paper className={fixedHeightPaper}>
-                <ChartBox swapper={'Astroport'} candles={true}/>
-              </Paper>
-            </Grid>
-          </Grid>
-        </Container>
+        {/*<Container maxWidth="lg" className={classes.container}>*/}
+        {/*  <Grid container spacing={3}>*/}
+        {/*    /!* Chart *!/*/}
+        {/*    <Grid item xs={12} md={12} lg={12}>*/}
+        {/*      <Paper className={fixedHeightPaper}>*/}
+        {/*        <ChartBox swapper={'TerraSwap'} candles={true}/>*/}
+        {/*      </Paper>*/}
+        {/*    </Grid>*/}
+        {/*    <Grid item xs={12} md={12} lg={12}>*/}
+        {/*      <Paper className={fixedHeightPaper}>*/}
+        {/*        <ChartBox swapper={'LOOP'} candles={true}/>*/}
+        {/*      </Paper>*/}
+        {/*    </Grid>*/}
+        {/*    <Grid item xs={12} md={12} lg={12}>*/}
+        {/*      <Paper className={fixedHeightPaper}>*/}
+        {/*        <ChartBox swapper={'Astroport'} candles={true}/>*/}
+        {/*      </Paper>*/}
+        {/*    </Grid>*/}
+        {/*  </Grid>*/}
+        {/*</Container>*/}
         <Copyright />
       </main>
     </div>

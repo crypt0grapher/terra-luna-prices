@@ -9065,6 +9065,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-moment@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "react-moment@npm:1.1.1"
+  peerDependencies:
+    moment: ^2.29.0
+    prop-types: ^15.7.0
+    react: ^16.0 || ^17.0.0
+  checksum: 7b80e2dd6a395e3ffd5cf3d0454c9413acfda1cfbf60f9aceb3f15316dcbdafb309390cd74403a0fb5debedb645147f63a24697c36d1a7cdb8c3fe51f9c68c87
+  languageName: node
+  linkType: hard
+
 "react-refresh@npm:0.8.3":
   version: 0.8.3
   resolution: "react-refresh@npm:0.8.3"
@@ -10311,6 +10322,7 @@ __metadata:
     prop-types: ^15.8.1
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-moment: ^1.1.1
     recharts: ^2.1.8
     redis: ^4.0.1
     reflect-metadata: ^0.1.13

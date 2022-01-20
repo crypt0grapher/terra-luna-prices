@@ -2,11 +2,8 @@ import { Injectable, Logger } from "@nestjs/common";
 import { TerraPrice, TerraPriceDocument } from "./app.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { InjectQueue } from "@nestjs/bull";
-import { Queue } from "bull";
 import { PriceCandleStick, PricePoint } from "../shared/types/price";
-import { Swapper, Swappers } from "../shared/types/swappers";
-import { TerraService } from "./terra/terra.service";
+import { Swapper } from "../shared/types/swappers";
 import { PopulateProcessor } from "./populate/populate.processor";
 
 const dbPricesAggregator = (swapper: string) => [
@@ -29,7 +26,7 @@ export class AppService {
     @InjectModel(TerraPrice.name) private terraPriceModel: Model<TerraPriceDocument>,
     private populateProcessor: PopulateProcessor,
     ) {
-    this.populateProcessor.handlePopulate();
+    // this.populateProcessor.handlePopulate();
   }
 
   //get prices for swapper in TradingView format
@@ -42,9 +39,12 @@ export class AppService {
 
   //get prices in Recharts format
   async getPricesRC() {
-    const dbPrices = await this.terraPriceModel.find();
-    return dbPrices.map(item => {
-      return { time: item._id.getTime() / 1000, ...item.prices};
+    const dbPrices = await this.terraPriceModel.find().sort({ time: -1 }).limit(100);
+    return dbPrices.filter(item => !!(item.time.getTime() && item.prices)).map(item => {
+      const reduced = item.prices.reduce((accumulator, value) => {
+        return { ...accumulator, ...value };
+      }, {});
+      return { time: item.time.getTime(), ...reduced };
     });
   }
 

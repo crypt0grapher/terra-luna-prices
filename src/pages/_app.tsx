@@ -9,6 +9,7 @@ import { AppData } from "src/shared/types/app-data";
 import { initializeFetch } from "src/shared/utils/fetch";
 import theme from "src/client/theme/theme";
 import createEmotionCache from "src/client/theme/createEmotionCache";
+import React from "react";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -36,6 +37,9 @@ class App extends NextApp<AppProps> {
 
     return (
       <CacheProvider value={clientSideEmotionCache}>
+        <Head>
+          <title>Terra Luna Prices Dashboard</title>
+        </Head>
         <AppDataContext.Provider value={this.appData}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
