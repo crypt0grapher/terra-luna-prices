@@ -1,57 +1,23 @@
+import React from "react";
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import { useTheme } from "@mui/system";
 import { makeStyles } from "@mui/styles";
-import Typography from "@mui/material/Typography";
 import clsx from "clsx";
-import React from "react";
-import ChartBox from "./Chart";
+import moment from "moment";
 import TitleBar from "./TitleBar";
 import PricesBox from "./PricesBox";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import moment from "moment";
+import { FormControl, InputLabel, MenuItem, Select, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Copyright } from "./Copyright";
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Built by "}
-      <Link color="inherit" href="https://github.com/crypt0grapher/terra-luna-prices">
-        crypt0grapher
-      </Link>
-      {" in "}
-      {new Date().getFullYear()}
-      <br />
-      {"Powered by "}
-      <Link color="inherit" href="https://terra.money">
-        Terra
-      </Link>
-      {", "}
-      <Link color="inherit" href="https://docs.mongodb.com/manual/core/timeseries-collections/">
-        MongoDB Time Series
-      </Link>
-      {", "}
-      <Link color="inherit" href="https://nestjs.com">
-        NestJS
-      </Link>
-      {", "}
-      <Link color="inherit" href="https://nextjs.org">
-        Next.js
-      </Link>
-      {", "}
-      <Link color="inherit" href="https://tradingview.com">
-        TradingView
-      </Link>
-      {", and "}
-      <Link color="inherit" href="https://material-ui.com/">
-        Material-UI.
-      </Link>
-      <br />
-      {"Free and open source, Apache 2.0 licensed."}
-    </Typography>
-  );
+enum Seconds {
+  in1Min = 60,
+  in30Min = 1800,
+  in1Hour = 3600,
+  in1Day = 86400,
+  in1Week = 604800,
 }
 
 const useStyles = makeStyles((theme: any) => ({
@@ -79,17 +45,17 @@ const useStyles = makeStyles((theme: any) => ({
   }
 }));
 
-const startOfToday = moment().startOf('day').valueOf();
-const startOfYesterday = moment().subtract(1, 'day').startOf('day').valueOf();
-const startOfWeek = moment().startOf('week').valueOf();
-const startOfMonth = moment().startOf('month').valueOf();
+const startOfToday = moment().startOf("day").valueOf();
+const startOfYesterday = moment().subtract(1, "day").startOf("day").valueOf();
+const startOfWeek = moment().startOf("week").valueOf();
+const startOfMonth = moment().startOf("month").valueOf();
 
 export default function Dashboard() {
   const classes = useStyles(useTheme());
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const [startDate, setStartDate] = React.useState<number>(startOfToday);
-  const [candlePeriod, setCandlePeriod] = React.useState<number>(3600);
+  const [candlePeriod, setCandlePeriod] = React.useState<number>(Seconds.in1Hour);
 
   return (
     <div className={classes.root}>
@@ -98,46 +64,39 @@ export default function Dashboard() {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
+          <Grid container spacing={2}>
             {/* Chart */}
-            <Grid item xs={12} md={6} lg={6}>
-                  <FormControl fullWidth>
-                    <InputLabel id="frequency-select-label">Frequency</InputLabel>
-                    <Select
-                      labelId="frequency-select-label"
-                      id="frequency-select"
-                      value={candlePeriod}
-                      label="Frequency"
-                      onChange={e => setCandlePeriod(Number(e.target.value)) }
-                    >
-                      <MenuItem value={3600}>Hourly</MenuItem>
-                      <MenuItem value={86400}>Daily</MenuItem>
-                      <MenuItem value={604800}>Weekly</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-            <Grid item xs={12} md={6} lg={6}>
-                <FormControl fullWidth>
-                  <InputLabel id="period-select-label">Period</InputLabel>
-                  <Select
-                    labelId="period-select-label"
-                    id="period-select"
-                    value={startDate}
-                    label="Period"
-                    onChange={e => setStartDate(Number(e.target.value) )}
-                  >
-                    <MenuItem value={startOfToday}>Today</MenuItem>
-                    <MenuItem value={startOfYesterday}>Yesterday</MenuItem>
-                    <MenuItem value={startOfWeek}>This week</MenuItem>
-                    <MenuItem value={startOfMonth}>This month</MenuItem>
-                  </Select>
-                </FormControl>
-          </Grid>
+            <Grid item xs={12} md={6} style={{ display: "flex"}} justifyContent={{xs:"center",md: "left" }}>
+              <ToggleButtonGroup
+                color="primary"
+                value={candlePeriod}
+                onChange={(event,value) => setCandlePeriod(Number(value))}
+                exclusive
+              >
+                <ToggleButton value={Seconds.in1Hour}>Hourly</ToggleButton>
+                <ToggleButton value={Seconds.in1Day}>Daily</ToggleButton>
+                <ToggleButton value={Seconds.in1Week}>Weekly</ToggleButton>
+              </ToggleButtonGroup>
+            </Grid>
+            <Grid item xs={12} md={6} style={{ display: "flex" }}  justifyContent={{xs:"center",md: "right" }}>
+              <ToggleButtonGroup
+                color="primary"
+                value={startDate}
+                onChange={(event,value) => setStartDate(Number(value))}
+                exclusive
+              >
+                <ToggleButton value={startOfToday}>Today</ToggleButton>
+                <ToggleButton value={startOfYesterday}>Since Yesterday</ToggleButton>
+                <ToggleButton value={startOfWeek}>This Week</ToggleButton>
+                <ToggleButton value={startOfMonth}>This Month</ToggleButton>
+              </ToggleButtonGroup>
+
+            </Grid>
             <Grid item xs={12} md={12} lg={12}>
-                <Paper className={fixedHeightPaper}>
-                  <PricesBox startDate={startDate} period={candlePeriod}/>
-                </Paper>
-          </Grid>
+              <Paper className={fixedHeightPaper}>
+                <PricesBox startDate={startDate} period={candlePeriod} />
+              </Paper>
+            </Grid>
           </Grid>
         </Container>
         {/*<Container maxWidth="lg" className={classes.container}>*/}

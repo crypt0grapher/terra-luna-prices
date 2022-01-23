@@ -2,9 +2,20 @@
   "name": "terra-luna-prices",
   "version": "0.0.1",
   "description": "Terra blockchain asset feed",
+  "keywords": [
+    "blockchain",
+    "terra",
+    "luna",
+    "bluna",
+    "nodejs",
+    "typescript",
+    "tsc",
+    "mongodb",
+    "mongoose"
+  ],
   "author": "crypt0grapher",
   "private": true,
-  "license": "MIT",
+  "license": "Apache 2.0",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "yarn build:next && yarn build:nest",
