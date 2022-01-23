@@ -1,22 +1,16 @@
 import AppBar from "@mui/material/AppBar";
-import Badge from "@mui/material/Badge";
-import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
 import { makeStyles} from "@mui/styles";
 import {useTheme} from '@mui/system';
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import MenuIcon from "@mui/icons-material/Menu";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import clsx from "clsx";
 import React from "react";
-import MenuList from "./MenuList";
-
+import { Avatar } from "@mui/material";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme: any) => ({
   appBar: {
+    backgroundColor: "darkblue",
     transition: theme.transitions.create(["width", "margin"], {
       duration: theme.transitions.duration.leavingScreen,
       easing: theme.transitions.easing.sharp,
@@ -91,51 +85,16 @@ const useStyles = makeStyles((theme: any) => ({
 
 export default function TitleBar() {
   const classes = useStyles(useTheme());
-  const [open, setOpen] = React.useState(false);
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
   return (
     <React.Fragment>
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+      <AppBar position="absolute" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-          >
-            <MenuIcon />
-          </IconButton>
+          <Avatar sx={{ m: 1 }} alt="Bonded Luna" src="https://whitelist.anchorprotocol.com/logo/bLUNA.png" />
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-          Terra blockchain crypto assets monitoring
+          bLuna price monitoring on Terra blockchain
           </Typography>
-          <IconButton color="inherit">
-              <Badge badgeContent={0} color="secondary">
-                  <NotificationsIcon />
-              </Badge>
-          </IconButton>
         </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-        }}
-        open={open}
-      >
-        <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <MenuList />
-      </Drawer>
+      </AppBar  >
     </React.Fragment>
   );
 }

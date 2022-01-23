@@ -3,25 +3,32 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
-import {useTheme} from '@mui/system';
-import { makeStyles } from '@mui/styles';
+import { useTheme } from "@mui/system";
+import { makeStyles } from "@mui/styles";
 import Typography from "@mui/material/Typography";
 import clsx from "clsx";
 import React from "react";
 import ChartBox from "./Chart";
 import TitleBar from "./TitleBar";
 import PricesBox from "./PricesBox";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import moment from "moment";
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
+      {"Built by "}
       <Link color="inherit" href="https://github.com/crypt0grapher/terra-luna-prices">
-        Open source
+        crypt0grapher
       </Link>
-      {", built in "}
+      {" in "}
       {new Date().getFullYear()}
-        <br/>
+      <br />
       {"Powered by "}
+      <Link color="inherit" href="https://terra.money">
+        Terra
+      </Link>
+      {", "}
       <Link color="inherit" href="https://docs.mongodb.com/manual/core/timeseries-collections/">
         MongoDB Time Series
       </Link>
@@ -41,6 +48,8 @@ function Copyright() {
       <Link color="inherit" href="https://material-ui.com/">
         Material-UI.
       </Link>
+      <br />
+      {"Free and open source, Apache 2.0 licensed."}
     </Typography>
   );
 }
@@ -49,30 +58,38 @@ const useStyles = makeStyles((theme: any) => ({
   appBarSpacer: theme.mixins.toolbar,
   container: {
     paddingBottom: theme.spacing(4),
-    paddingTop: theme.spacing(4),
+    paddingTop: theme.spacing(4)
   },
   content: {
     flexGrow: 1,
     height: "200vh",
-    overflow: "auto",
+    overflow: "auto"
   },
   fixedHeight: {
-    height: 500,
+    height: 500
   },
   paper: {
     display: "flex",
     flexDirection: "column",
     overflow: "auto",
-    padding: theme.spacing(2),
+    padding: theme.spacing(2)
   },
   root: {
-    display: "flex",
-  },
+    display: "flex"
+  }
 }));
+
+const startOfToday = moment().startOf('day').valueOf();
+const startOfYesterday = moment().subtract(1, 'day').startOf('day').valueOf();
+const startOfWeek = moment().startOf('week').valueOf();
+const startOfMonth = moment().startOf('month').valueOf();
 
 export default function Dashboard() {
   const classes = useStyles(useTheme());
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  const [startDate, setStartDate] = React.useState<number>(startOfToday);
+  const [candlePeriod, setCandlePeriod] = React.useState<number>(3600);
 
   return (
     <div className={classes.root}>
@@ -83,11 +100,44 @@ export default function Dashboard() {
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
             {/* Chart */}
+            <Grid item xs={12} md={6} lg={6}>
+                  <FormControl fullWidth>
+                    <InputLabel id="frequency-select-label">Frequency</InputLabel>
+                    <Select
+                      labelId="frequency-select-label"
+                      id="frequency-select"
+                      value={candlePeriod}
+                      label="Frequency"
+                      onChange={e => setCandlePeriod(Number(e.target.value)) }
+                    >
+                      <MenuItem value={3600}>Hourly</MenuItem>
+                      <MenuItem value={86400}>Daily</MenuItem>
+                      <MenuItem value={604800}>Weekly</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+            <Grid item xs={12} md={6} lg={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="period-select-label">Period</InputLabel>
+                  <Select
+                    labelId="period-select-label"
+                    id="period-select"
+                    value={startDate}
+                    label="Period"
+                    onChange={e => setStartDate(Number(e.target.value) )}
+                  >
+                    <MenuItem value={startOfToday}>Today</MenuItem>
+                    <MenuItem value={startOfYesterday}>Yesterday</MenuItem>
+                    <MenuItem value={startOfWeek}>This week</MenuItem>
+                    <MenuItem value={startOfMonth}>This month</MenuItem>
+                  </Select>
+                </FormControl>
+          </Grid>
             <Grid item xs={12} md={12} lg={12}>
-              <Paper className={fixedHeightPaper}>
-                <PricesBox/>
-              </Paper>
-            </Grid>
+                <Paper className={fixedHeightPaper}>
+                  <PricesBox startDate={startDate} period={candlePeriod}/>
+                </Paper>
+          </Grid>
           </Grid>
         </Container>
         {/*<Container maxWidth="lg" className={classes.container}>*/}

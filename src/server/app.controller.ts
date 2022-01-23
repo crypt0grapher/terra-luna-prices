@@ -7,7 +7,11 @@ import {
 import { AppService } from './app.service';
 import { ParamsInterceptor } from './params.interceptor';
 import { ConfigInterceptor } from './config.interceptor';
-import { ParamsWithSwapperName, ParamsWithSwapperNameAndScale } from "../shared/types/swappers";
+import {
+  ParamsWithStartDateAndPeriod,
+  ParamsWithSwapperName,
+  ParamsWithSwapperNameAndScale
+} from "../shared/types/swappers";
 
 @Controller()
 export class AppController {
@@ -32,9 +36,13 @@ export class AppController {
     return null;
   }
 
-  @Get('/api/prices/')
-  public listPricesRecharts(@Param() {swapper}: ParamsWithSwapperName) {
-    return this.appService.getPricesRC();
+  @Get('/api/prices/:startDate/:period')
+  public listPricesRecharts(@Param() {startDate, period}: ParamsWithStartDateAndPeriod) {
+    console.log(startDate.toString());
+    if (startDate && period)
+      return this.appService.getPricesWithDetails(new Date(+startDate), period);
+    else
+      return this.appService.getPricesRC();
   }
 
   @Get('/api/prices/:swapper')

@@ -1,5 +1,5 @@
 import React from "react";
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 import {
   LineChart,
   Line,
@@ -7,28 +7,27 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ReferenceArea,
-  TooltipProps
+  TooltipProps, ResponsiveContainer, Legend
 } from "recharts";
-import {
-  ValueType,
-  NameType,
-} from 'recharts/src/component/DefaultTooltipContent';
-import Title from "./Title";
-import dynamic from "next/dynamic";
-import { PriceCandleStick, PricePoint } from "../../shared/types/price";
-import { getPrices, getCandles, getAllPrices } from "../lib/api";
+
+import { getAllPricesWithDetails } from "../lib/api";
 import { Swapper } from "../../shared/types/swappers";
 import moment from "moment/moment";
 import Moment from "react-moment";
-import PropTypes from "prop-types";
 import { Card } from "@mui/material";
 
-const Chart = dynamic(() => import("kaktana-react-lightweight-charts"), {
-  ssr: false
-});
+type SwapperPointData = {
+  [key in Swapper]: number
+};
 
-const CustomTooltip =({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
+type ChartPointData = SwapperPointData & { time: number};
+
+interface Props {
+  startDate: number,
+  period: number
+}
+
+const CustomTooltip =({ active, payload, label }: TooltipProps<number | string, number | string>) => {
   // console.log(JSON.stringify(payload));
   if (active && payload && payload.length)
     return       <Card>
@@ -41,35 +40,29 @@ const CustomTooltip =({ active, payload, label }: TooltipProps<ValueType, NameTy
     return null;
 }
 
-CustomTooltip.propTypes = {
-  type: PropTypes.string,
-  payload: PropTypes.array,
-  label: PropTypes.string,
-}
+// CustomTooltip.propTypes = {
+//   type: PropTypes.string,
+//   payload: PropTypes.array,
+//   label: PropTypes.string,
+// }
 
-const PricesBox: FC = () => {
-  const [initialData, setInitialData] = React.useState([]);
-  const [date, setDate] = React.useState<Date>(new Date());
+
+const PricesBox: FC<Props> = ({startDate, period}) => {
+  const [chartData, setChartData] = React.useState<Array<ChartPointData>>([]);
 
   React.useEffect(() => {
-    getAllPrices().then(setInitialData);
+    getAllPricesWithDetails(startDate, period).then(setChartData);
     // console.log(JSON.stringify(initialData));
-  }, []);
-
-  React.useEffect(() => {
-    let timerID = setInterval(() => tick(), 60000);
-    return () => clearInterval(timerID);
-  });
-  const tick = () => setDate(new Date());
-
+  }, [startDate, period]);
 
       return (
     <React.Fragment>
-      <LineChart width={800} height={400} data={initialData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+      <ResponsiveContainer>
+      <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
         <Line
           type="natural"
           dataKey="TerraSwap"
-          stroke="#8884d8"
+          stroke="#0884d8"
           animationDuration={300}
         />
         <Line
@@ -81,7 +74,7 @@ const PricesBox: FC = () => {
         <Line
           type="natural"
           dataKey="Astroport"
-          stroke="#8284d8"
+          stroke="#8232d8"
           animationDuration={300}
         />
         <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
@@ -99,7 +92,9 @@ const PricesBox: FC = () => {
           type="number"
         />
         <Tooltip content={<CustomTooltip />} cursor={false} />
+        <Legend wrapperStyle={{top: 0, left: 25}}/>
       </LineChart>
+      </ResponsiveContainer>
     </React.Fragment>
   );
 };

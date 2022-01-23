@@ -48,6 +48,18 @@ export class AppService {
     });
   }
 
+  //get prices in Recharts format with details
+  async getPricesWithDetails(startDate: Date, period: number) {
+    const dbPrices = await this.terraPriceModel.find({time: {$gte: startDate}}).sort({ time: -1 }).limit(1000);
+
+    return dbPrices.filter(item => !!(item.time.getTime() && item.prices)).map(item => {
+      const reduced = item.prices.reduce((accumulator, value) => {
+        return { ...accumulator, ...value };
+      }, {});
+      return { time: item.time.getTime(), ...reduced };
+    });
+  }
+
   async getCandles(swapper: Swapper, scale: number) {
     const dbPrices = await this.terraPriceModel.aggregate([{
       $group: {

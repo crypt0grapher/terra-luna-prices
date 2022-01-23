@@ -1,12 +1,9 @@
-import { Process, Processor } from '@nestjs/bull';
 import { Inject, Logger } from "@nestjs/common";
-import { Job } from 'bull';
 import { TerraService } from "../terra/terra.service";
 import { InjectModel } from "@nestjs/mongoose";
 import { TerraPrice, TerraPriceDocument } from "../app.schema";
 import { Model } from "mongoose";
 import { ConfigService } from "@nestjs/config";
-import { setTimeout } from "timers/promises";
 import { setIntervalAsync} from "set-interval-async/dynamic";
 import { clearIntervalAsync } from 'set-interval-async'
 

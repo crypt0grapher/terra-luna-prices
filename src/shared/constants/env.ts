@@ -4,7 +4,7 @@ export const isClient = !isServer;
 
 export const NODE_ENV = process.env.NODE_ENV;
 
-export const PORT = process.env.PORT || 3000;
+export const PORT = process.env.BLUNA_PORT || 3000;
 
 
 export const chain_id = 'columbus-5';

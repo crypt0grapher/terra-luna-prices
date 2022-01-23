@@ -15,6 +15,11 @@ export class ParamsWithSwapperNameAndScale {
   scale!: number;
 }
 
+export class ParamsWithStartDateAndPeriod {
+  startDate!: number;
+  period!: number;
+}
+
 export interface PoolResponse {
   "assets": [
     {
