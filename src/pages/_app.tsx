@@ -3,23 +3,27 @@ import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { CacheProvider } from "@emotion/react";
 import Head from "next/head";
+import React, { useState } from "react";
 
 import { AppDataContext } from "src/client/ssr/appData";
+import TradeContext, { defaultTrade, ITradeContext } from "../client/hooks/tradeContext";
+import { TradeParams } from "../shared/types/trade";
 import { AppData } from "src/shared/types/app-data";
 import { initializeFetch } from "src/shared/utils/fetch";
 import theme from "src/client/theme/theme";
 import createEmotionCache from "src/client/theme/createEmotionCache";
-import React from "react";
 
 const clientSideEmotionCache = createEmotionCache();
 
 class App extends NextApp<AppProps> {
   appData: AppData;
+  tradeState: ITradeContext;
 
   constructor(props: AppProps) {
     super(props);
 
     this.appData = props.pageProps.appData || {};
+    this.tradeState = defaultTrade;
 
     initializeFetch(this.appData.basePath);
   }
@@ -35,6 +39,12 @@ class App extends NextApp<AppProps> {
   render() {
     const { Component, pageProps } = this.props;
 
+    const [tradeParams, setTradeParams] = useState<ITradeContext>(this.tradeState);
+
+    const setupTradeParams = (buyAt?: number, sellAt?: number) => {
+      setTradeParams({ tradeParams: { buyAt, sellAt } });
+    }
+
     return (
       <CacheProvider value={clientSideEmotionCache}>
         <Head>
@@ -43,7 +53,12 @@ class App extends NextApp<AppProps> {
         <AppDataContext.Provider value={this.appData}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Component {...pageProps} />
+            <TradeContext.Provider value={{
+              ...tradeParams,
+              setTradeParams: setupTradeParams
+            }}>
+              <Component {...pageProps} />
+            </TradeContext.Provider>
           </ThemeProvider>
         </AppDataContext.Provider>
       </CacheProvider>

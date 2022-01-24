@@ -26,7 +26,7 @@ export class AppService {
     @InjectModel(TerraPrice.name) private terraPriceModel: Model<TerraPriceDocument>,
     private populateProcessor: PopulateProcessor,
     ) {
-    // this.populateProcessor.handlePopulate();
+    this.populateProcessor.handlePopulate();
   }
 
   //get prices for swapper in TradingView format

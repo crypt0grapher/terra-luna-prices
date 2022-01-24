@@ -17,14 +17,17 @@ export class PopulateProcessor {
                ) {}
 
   async handlePopulate() {
-    setIntervalAsync( () =>
-    this.terraService.getPriceData().then(prices => {
-      if (prices) {
-        const document = new this.terraPriceModel({ time: new Date(), prices: prices });
+    setIntervalAsync( async () => {
+    const contractsPool = await this.terraService.getPriceFromPool();
+    const bLunaBuyPrice = await this.terraService.simulateBuyBLuna();
+    const bLunaSellPrice = await this.terraService.simulateSellBLuna();
+
+      if (contractsPool) {
+        const document = new this.terraPriceModel({ time: new Date(), prices: contractsPool.prices });
         this.logger.debug(JSON.stringify(document));
         document.save();
       }
-    }),
+    },
       3000);
   }
 }

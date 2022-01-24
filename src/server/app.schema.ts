@@ -1,6 +1,6 @@
 import {Prop, Schema, SchemaFactory} from '@nestjs/mongoose';
 import {Document, Schema as MongooseSchema} from 'mongoose';
-import { Pool, Price } from "../shared/types/price";
+import { Pool, Price, Simulation } from "../shared/types/price";
 
 export type TerraPriceDocument = TerraPrice & Document;
 
@@ -17,8 +17,11 @@ export class TerraPrice {
     @Prop()
     prices!: Price[];
 
-     @Prop()
-    simulations!: Price[];
+    @Prop()
+    simulationsBuy!: Simulation[];
+
+    @Prop()
+    simulationsSell!: Simulation[];
 
     @Prop()
     pools!: Pool[];

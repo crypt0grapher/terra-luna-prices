@@ -49,12 +49,8 @@ export interface SimulationResponse {
   commission_amount: string;
 }
 
-//real bLuna price for 1 uLuna: simulate swap 1uLuna and get how much bLuna is received, then vice versa:
-//simulate swap 1bLuna and see how many uLuna will be received
-export type Simulations = {
-  [swapper in Swapper]: {
-    bLunaPriceInuLuna: SimulationResponse,
-    uLunaPriceInbLuna: SimulationResponse
-  }
-};
-
+export type ReverseSimulationResponse = {
+  offer_amount: number,
+  spread_amount: number,
+  commission_amount: number
+}

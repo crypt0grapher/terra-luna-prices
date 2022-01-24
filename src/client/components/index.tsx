@@ -11,6 +11,7 @@ import TitleBar from "./TitleBar";
 import PricesBox from "./PricesBox";
 import { FormControl, InputLabel, MenuItem, Select, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { Copyright } from "./Copyright";
+import TradeSetupPanel from "./TradeSetupPanel";
 
 enum Seconds {
   in1Min = 60,
@@ -90,11 +91,15 @@ export default function Dashboard() {
                 <ToggleButton value={startOfWeek}>This Week</ToggleButton>
                 <ToggleButton value={startOfMonth}>This Month</ToggleButton>
               </ToggleButtonGroup>
-
             </Grid>
             <Grid item xs={12} md={12} lg={12}>
               <Paper className={fixedHeightPaper}>
                 <PricesBox startDate={startDate} period={candlePeriod} />
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={12} lg={12}>
+              <Paper className={fixedHeightPaper}>
+                <TradeSetupPanel />
               </Paper>
             </Grid>
           </Grid>

@@ -11,34 +11,82 @@ import {
 } from "recharts";
 
 import { getAllPricesWithDetails } from "../lib/api";
-import { Swapper } from "../../shared/types/swappers";
+import { Swapper, Swappers } from "../../shared/types/swappers";
 import moment from "moment/moment";
 import Moment from "react-moment";
-import { Card } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  TableContainer,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell
+} from "@mui/material";
+import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
 
 type SwapperPointData = {
   [key in Swapper]: number
 };
 
-type ChartPointData = SwapperPointData & { time: number};
+type SwapperColor = {
+  [key in Swapper]: string
+};
+
+type ChartPointData = SwapperPointData & { time: number };
 
 interface Props {
   startDate: number,
   period: number
 }
 
-const CustomTooltip =({ active, payload, label }: TooltipProps<number | string, number | string>) => {
+const swapperColor: SwapperColor = {
+  TerraSwap: "#0884d8",
+  LOOP: "#670862",
+  Astroport: "#00008B"
+};
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number | string, number | string>) => {
   // console.log(JSON.stringify(payload));
   if (active && payload && payload.length)
-    return       <Card>
-      <p className="desc"><Moment format="HH:mm:ss DD/MM/YYYY">{new Date(label)}</Moment></p>
-        {payload.map((item) => {
-          return <p><b>{item.dataKey}</b> {Number(item.value)?.toFixed(5)}</p>
-        })}
-    </Card>
+    return <>
+      <Card variant="outlined">
+        <CardContent>
+          <Typography gutterBottom variant="h6" component="div">
+            <Moment format="HH:mm:ss DD/MM/YYYY">{new Date(label)}</Moment>
+          </Typography>
+          <TableContainer>
+            <Table>
+              <TableBody>
+                {payload.map((item) => {
+                  // @ts-ignore
+                  const lineColor = swapperColor[item.dataKey];
+                  return <>
+                    <TableRow>
+                      <TableCell>
+                        <Typography color={lineColor}>
+                          {item.dataKey}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color={lineColor}>
+                          {Number(item.value)?.toFixed(5)}
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  </>;
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CardContent>
+      </Card>
+    </>;
   else
     return null;
-}
+};
 
 // CustomTooltip.propTypes = {
 //   type: PropTypes.string,
@@ -47,7 +95,7 @@ const CustomTooltip =({ active, payload, label }: TooltipProps<number | string, 
 // }
 
 
-const PricesBox: FC<Props> = ({startDate, period}) => {
+const PricesBox: FC<Props> = ({ startDate, period }) => {
   const [chartData, setChartData] = React.useState<Array<ChartPointData>>([]);
 
   React.useEffect(() => {
@@ -55,45 +103,51 @@ const PricesBox: FC<Props> = ({startDate, period}) => {
     // console.log(JSON.stringify(initialData));
   }, [startDate, period]);
 
-      return (
+  return (
     <React.Fragment>
       <ResponsiveContainer>
-      <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-        <Line
-          type="natural"
-          dataKey="TerraSwap"
-          stroke="#0884d8"
-          animationDuration={300}
-        />
-        <Line
-          type="natural"
-          dataKey="LOOP"
-          stroke="#82ca9d"
-          animationDuration={300}
-        />
-        <Line
-          type="natural"
-          dataKey="Astroport"
-          stroke="#8232d8"
-          animationDuration={300}
-        />
-        <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
-        <XAxis
-          dataKey = 'time'
-          domain = {['auto', 'auto']}
-          name = 'Time'
-          tickFormatter = {(unixTime) => moment(unixTime).format('dd HH:mm')}
-          type = 'number'
-        />
-        <YAxis
-          orientation="left"
-          allowDataOverflow
-          domain={['auto', 'auto']}
-          type="number"
-        />
-        <Tooltip content={<CustomTooltip />} cursor={false} />
-        <Legend wrapperStyle={{top: 0, left: 25}}/>
-      </LineChart>
+        <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+          <Line
+            type="monotone"
+            dataKey="TerraSwap"
+            stroke={swapperColor.TerraSwap}
+            dot={false}
+            strokeWidth={2}
+            animationDuration={300}
+          />
+          <Line
+            type="monotone"
+            dataKey="LOOP"
+            stroke={swapperColor.LOOP}
+            dot={false}
+            strokeWidth={2}
+            animationDuration={300}
+          />
+          <Line
+            type="monotone"
+            dataKey="Astroport"
+            stroke={swapperColor.Astroport}
+            dot={false}
+            strokeWidth={2}
+            animationDuration={300}
+          />
+          <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
+          <XAxis
+            dataKey="time"
+            domain={["auto", "auto"]}
+            name="Time"
+            tickFormatter={(unixTime) => moment(unixTime).format("DD/MM HH:mm")}
+            type="number"
+          />
+          <YAxis
+            orientation="left"
+            allowDataOverflow
+            domain={["auto", "auto"]}
+            type="number"
+          />
+          <Tooltip content={<CustomTooltip />} cursor={false} />
+          <Legend wrapperStyle={{ top: 10, left: 25 }} />
+        </LineChart>
       </ResponsiveContainer>
     </React.Fragment>
   );

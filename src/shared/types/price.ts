@@ -1,4 +1,4 @@
-import { Swapper } from './swappers';
+import { ReverseSimulationResponse, Swapper } from "./swappers";
 
 //LP Pool Query
 export type Pool = {
@@ -14,6 +14,10 @@ export type Pool = {
 
 export type Price = {
   [swapper in Swapper]: number;
+};
+
+export type Simulation = {
+  [swapper in Swapper]: ReverseSimulationResponse;
 };
 
 export interface PricePoint {
